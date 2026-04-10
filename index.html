@@ -4,9 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FlixHunt</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>FlixHunt</h1>
-    <p>Welcome to FlixHunt!</p>
+    <div class="navbar">
+        <h2>FlixHunt</h2>
+
+        <div class="nav-links">
+            <a href="login.html">Login</a>
+            <a href="signup.html">Sign Up</a>
+        </div>
+
+        <div class="hamburger" onclick="toggleMenu()">☰</div>//should trigger dropdown
+
+        <div id="menu" class="menu"> //inside the hamburger
+            <p><strong>Browse by Genre</strong></p>
+            <div id="genre-list"></div>
+
+            <p><strong>Sort By</strong></p>
+            <a href="#" onclick="sortMovies('date')">Date</a>
+            <a href="#" onclick="sortMovies('alpha')">Alphabetical</a>
+        </div>
+    </div>
+
+    <div class="hero">
+        <h1>Watch Movies</h1>
+        <button class="watch-btn">Watch Now</button>
+    </div>
+    <div id="featured-movie" class="featured"></div> //for big movie container before gallery with other movies
+    <div id="movie-container" class="container"></div> //container for js to fill the movies
+
+    <script src="script.js"></script>
 </body>
 </html>
