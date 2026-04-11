@@ -145,7 +145,7 @@ img {
   justify-content: center;
 }
 .menu {
-  display: none;
+   display: none; 
   position: absolute;
   top: 64px;
   right: 16px;

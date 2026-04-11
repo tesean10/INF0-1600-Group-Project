@@ -64,7 +64,7 @@ function sortMovies(type) {
 // Toggle Menu
 function toggleMenu() {
     const menu = document.getElementById('menu');
-    menu.classList.toggle('show');
+    menu.classList.toggle('open');
 }
 
 getMovies();
