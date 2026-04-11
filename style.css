@@ -282,7 +282,6 @@ img {
   transform: translateY(-2px);
 }
 
-
 .featured {
   max-width: 1200px;
   margin: 40px auto 32px;
@@ -342,7 +341,6 @@ img {
   line-height: 1.75;
   max-width: 540px;
 }
-
 
 .container {
   display: flex;
@@ -472,7 +470,30 @@ img {
   color: var(--accent);
 }
 
+.modal
+{
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width:80%;
+  height: 90%;
+  background: rgba(0,0,0,0.8);
+  justify-content: center;
+  align-items: center;
+}
 
+.modal.show
+{
+  display: flex;
+} 
+
+.modal-content
+{
+  background: #222;
+  padding: 20px;
+  max-width: 500px;
+}
 .loading-msg,
 .empty-msg {
   width: 100%;
@@ -505,7 +526,6 @@ body:has(.form-container) {
   margin: 24px;
 }
 
-
 .form-container h2 {
   font-family: var(--font-display);
   font-size: 32px;
@@ -514,7 +534,6 @@ body:has(.form-container) {
   text-align: center;
   margin-bottom: 6px;
 }
-
 
 .form-container input[type="text"],
 .form-container input[type="email"],
@@ -543,7 +562,6 @@ body:has(.form-container) {
   box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
-
 .form-container button {
   width: 100%;
   padding: 13px;
@@ -568,7 +586,6 @@ body:has(.form-container) {
 .form-container button:active {
   transform: translateY(0);
 }
-
 
 .form-container p {
   text-align: center;
