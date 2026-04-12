@@ -459,3 +459,7 @@ function liveSearch()
     displayMovies(currentMovies.slice(0, visibleMovies));
 }
 
+if ('serviceWorker' in navigator) 
+{
+  navigator.serviceWorker.register('/service-worker.js');
+}
