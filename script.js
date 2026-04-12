@@ -44,7 +44,8 @@ let movieData = [];
 async function getMovies(page = 1)
 {
 try {
-    const res = await fetch(API_URL);
+    const URL = `https://api.themoviedb.org/3/movie/top_rated?api_key=${API_KEY}&page=${page}`;
+    const res = await fetch(URL);
     const data = await res.json();
 
     if (page === 1)
@@ -57,7 +58,7 @@ try {
     }
 
     currentMovies = [...movieData];
-    displayMovies(currentMovies.slice(0, visibleMovies));
+    displayMovies(movieData);
 
     if (typeof setupGenres === 'function') 
     {
@@ -77,7 +78,7 @@ function displayMovies(movies) {
     
     container.innerHTML = '';
 
-    movies.forEach(movie => 
+    movies.slice(0, visibleMovies).forEach(movie => 
     {
         const { title, poster_path, vote_average, release_date } = movie;
 
