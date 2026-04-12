@@ -2,6 +2,24 @@ const API_KEY = 'cc6be9344c3535221497d244fe2f7ff2';
 const API_URL = `https://api.themoviedb.org/3/movie/top_rated?api_key=${API_KEY}`;
 const IMG_PATH = 'https://image.tmdb.org/t/p/w500';
 
+const genreNames =
+{
+    28: "Action",
+    12: "Adventure",
+    16: "Animation",
+    35: "Comedy",
+    80: "Crime",
+    99: "Documentary",
+    18: "Drama",
+    10751: "Family",
+    14: "Fantasy",
+    27: "Horror",
+    9648: "Mystery",
+    10749: "Romance",
+    878: "Sci-Fi",
+    53: "Thriller"
+};
+
 let movieData = []; 
 
 // Fetch Data from TMDB
@@ -114,7 +132,7 @@ function login()
 
     if (email === "bob@mail.com" && password === "bobpass")
     {
-        localStorage.setItem("loggedIn", true);
+        sessionStorage.setItem("loggedIn", true);
         window.location.href = "index.html";
     }
     else
@@ -123,24 +141,33 @@ function login()
     }
 }
 
-function addToFavourites(id,buttonElement)
+function addToFavourites(id) /*buttonElement*/
 {
+    const loggedIn = sessionStorage.getItem("loggedIn");
+
+    if (!loggedIn)
+    {
+        alert("Please log in first to save favourites.")
+        window.location.href = "login.html";
+        return;
+    }
+
     let favs = JSON.parse(localStorage.getItem("favourites")) || [];
 
-    if (!favs.includes(id))
+    if (favs.includes(id))
+    {
+        favs = favs.filter(movieId => movieId !== id);
+        alert("Removed from favourites");
+    }
+    else
     {
         favs.push(id);
-        localStorage.setItem("favourites", JSON.stringify(favs));
-
-        if(buttonElement)
-        {
-            buttonElement.classList.add('active');
-            buttonElement.innerHTML = "Added to Favourites";
-        }
         alert("Added to favourites");
     }
-}
 
+    localStorage.setItem("favourites", JSON.stringify(favs));
+
+}
 
 function displayFavouritesPage(movies)
 {
@@ -158,9 +185,12 @@ function displayFavouritesPage(movies)
             <span class="rating">${vote_average}</span>
             <p>${release_date ? release_date.split('-')[0] : 'N/A'}</p>
 
-            <button class="remove-btn" onclick="removeFromFavourites(${movie.id})">
-                Remove from Favourites
-            </button>
+            <button onclick="addToFavourites('${movie.id}')"> 
+             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-heart" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 4.41c1.387-1.425 4.854 1.07 0 4.277C3.146 5.48 6.613 2.986 8 4.412z"/>
+                <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1
+            </svg>
+        </button>
             </div>
             `;
             movieElement.onclick = (e) => 
@@ -198,13 +228,6 @@ async function loadFavourites()
         displayFavouritesPage([movie]);
     }
 
-    window.onload = () =>
-    {
-        if(document.getElementById("favourites-container"))
-        {
-            loadFavourites();
-        }
-    }
 }
 
 //movie modal
@@ -243,6 +266,8 @@ function showMovieDetails(movie)
 
     modal.classList.add("show");
 }
+
+//clodse modal
 function closeModal()
 {
     document.getElementById("movie-modal").classList.remove("show");
@@ -259,24 +284,62 @@ window.onload = () =>
     {
         loadFavourites();
     }
+
+    updateAuthButton();
 }
 
-function signup() 
+function setupGenres(movies)
 {
-    const username = document.querySelector('input[type="text"]').value;
-    const email = document.querySelector('input[type="email"]').value;
-    const password = document.querySelectorAll('input[type="password"]')[0].value;
-    const confirm = document.querySelectorAll('input[type="password"]')[1].value;
+    const menu = document.getElementById("genre-dropdown-menu");
+    if (!menu) return;
 
-    if (password !== confirm) {
-        alert("Passwords do not match");
-        return;
+    const uniqueGenres = new set();
+
+    movies.forEach(movie => {
+        movie.genre_ids?.forEach(id => uniqueGenres.add(id));
+    });
+
+    menu.innerHTML =`<a onclick="displayMovies(movieData)">All</a>`;
+
+    uniqueGenres.forEach(id => {
+        if(genreNames[id])
+        {
+            const item = document.createElement("a");
+            item.innerText = genreNames[id];
+
+            item.onclick = () => 
+            {
+                const filtered = movieData.filter(movie =>
+                    movie.genre_ids?.includes(id)
+                );
+                displayMovies(filtered);
+            };
+
+            menu.appendChild(item);
+        }
+    });
+}
+
+function updateAuthButton()
+{
+    const authLink = document.getElementById("auth-link");
+    if (!authLink) return;
+
+    if(sessionStorage.getItem("loggedIn"))
+    {
+        authLink.innerText = "Logout";
+        authLink.href ="#";
+        authLink.onclick = logout;
     }
+    else
+    {
+        authLink.innerText ="Login";
+        authLink.href = "login.html";
+        authLink.onclick = null;
+    }
+}
 
-    const user = { username, email, password };
-
-    localStorage.setItem("newUser", JSON.stringify(user));
-
-    alert("Account created successfully");
-    window.location.href = "login.html";
+function logout() {
+    sessionStorage.removeItem("loggedIn");
+    window.location.href = "index.html";
 }

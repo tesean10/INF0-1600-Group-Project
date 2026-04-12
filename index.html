@@ -13,8 +13,11 @@
 
         <div class="nav-right">
             <div class="nav-links">
-                <a href="login.html">Login</a>
-                <a href="signup.html">Sign Up</a>
+                <div class="genre-dropdown">
+                    <button class="genre-drop-btn">Genres ▾</button>
+                    <div id="genre-dropdown-menu" class="genre-dropdown-menu"></div>
+                </div>
+                <a id="auth-link" href="login.html">Login</a>
             </div>
 
             <div class="hamburger" onclick="toggleMenu()">
@@ -26,12 +29,12 @@
 
         <div id="menu" class="menu"> 
             <p><strong><a href="favourites.html">View Favourites List</a></strong></p>
-            <p><strong>Browse by Genre</strong></p>
+            <!-- <p><strong>Browse by Genre</strong></p> -->
             <div id="genre-list"></div>
 
             <p><strong>Sort By</strong></p>
-            <a href="#" onclick="sortMovies('date')">Date</a>
-            <a href="#" onclick="sortMovies('alpha')">Alphabetical</a>
+            <a href="#" onclick="sortMovies('date')">Date (New-Old)</a>
+            <a href="#" onclick="sortMovies('alpha')">Alphabetical(A-Z)</a>
         </div>
     </div>
 
@@ -46,9 +49,9 @@
              </button>
         </div>
 
-        <button class="watch-btn">Search Now</button>
     </div>
-    <div id="featured-movie" class="featured"></div> 
+    <!-- <div id="featured-movie" class="featured"></div>  -->
+    <div id="genre-filter-bar" class="genre-filter-bar"></div>
     <div id="movie-container" class="container"></div> 
 
     <script src="script.js"></script>

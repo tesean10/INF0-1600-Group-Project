@@ -242,7 +242,6 @@ img {
   box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
-
 .search-btn {
   padding: 12px 18px;
   background: var(--accent);
@@ -342,12 +341,13 @@ img {
   max-width: 540px;
 }
 
-.container {
-  display: flex;
-  flex-wrap: wrap;
+.container 
+{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 18px;
   padding: 0 24px 60px;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
@@ -735,4 +735,67 @@ body:has(.form-container) {
   {
     max-width: 160px;
   }
+}
+
+.genre-filter-bar 
+{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 20px 24px;
+  justify-content: center;
+}
+
+.genre-btn
+{
+  padding: 8px 16px;
+  background: var(--bg-card);
+  color: white;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.genre-btn:hover
+{
+  border-color: var(--accent);
+}
+
+.genre-dropdown
+{
+  position:relative;
+}
+
+.genre-drop-btn
+{
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.genre-dropdown-menu
+{
+  display:none;
+  position: absolute;
+  top: 40px;
+  left: 0;
+  background: var(--bg-secondary);
+  min-width: 180px;
+  z-index: 300;
+  padding: 8px;
+}
+
+.genre-dropdown:hover .genre-dropdown-menu
+{
+  display: block;
+}
+
+.genre-dropdown-menu a
+{
+  display: block;
+  padding: 8px;
+  cursor: pointer;
 }
