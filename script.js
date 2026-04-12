@@ -260,3 +260,23 @@ window.onload = () =>
         loadFavourites();
     }
 }
+
+function signup() 
+{
+    const username = document.querySelector('input[type="text"]').value;
+    const email = document.querySelector('input[type="email"]').value;
+    const password = document.querySelectorAll('input[type="password"]')[0].value;
+    const confirm = document.querySelectorAll('input[type="password"]')[1].value;
+
+    if (password !== confirm) {
+        alert("Passwords do not match");
+        return;
+    }
+
+    const user = { username, email, password };
+
+    localStorage.setItem("newUser", JSON.stringify(user));
+
+    alert("Account created successfully");
+    window.location.href = "login.html";
+}
