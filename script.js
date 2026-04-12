@@ -2,7 +2,7 @@ const API_KEY = 'cc6be9344c3535221497d244fe2f7ff2';
 const API_URL = `https://api.themoviedb.org/3/movie/top_rated?api_key=${API_KEY}`;
 const IMG_PATH = 'https://image.tmdb.org/t/p/w500';
 
-let visibleMovies = 18;
+let visibleMovies = 20;
 let currentMovies = [];
 let currentPage = 1;
 
@@ -115,15 +115,18 @@ function displayMovies(movies) {
 }
 
 // Search Movies (Local Filter)
-function searchMovies() {
+function searchMovies() 
+{
     const searchTerm = document.getElementById('search-input').value.toLowerCase();
     const filteredMovies = movieData.filter(movie =>
         movie.title.toLowerCase().includes(searchTerm)
     );
     displayMovies(filteredMovies);
 }
+
 // API Search Logic Entire catalouge
-async function searchMovies() {
+async function apisearchMovies() 
+{
     const query = document.getElementById('search-input').value;
     
     if (query.trim() === "") {
@@ -292,16 +295,34 @@ function showMovieDetails(movie)
     const content = document.getElementById("modal-content");
 
     content.innerHTML = `
+        <span class="close-x" onclick="closeModal()">x</span>
         <div class="modal-layout">
             <div class="modal-left">
                 <h2>${movie.title}</h2>
                 <img src="${IMG_PATH + movie.poster_path}" alt="${movie.title}">
-                <p><strong>Rating:</strong> ${movie.vote_average}</p>
-                <p><strong>Year:</strong> ${
-                    movie.release_date
-                        ? movie.release_date.split('-')[0]
-                        : 'N/A'
-                }</p>
+            </div>
+
+            <div class="modal-right">
+                <div class="modal-meta">
+                    <p><strong>Rating:</strong> ${movie.vote_average}</p>
+                    <p><strong>Year:</strong> ${ 
+                        movie.release_date  ? movie.release_date.split('-')[0]  : 'N/A'  
+                    }</p>
+
+                    <p><strong>Genre:</strong> ${
+                        movie.genre_ids
+                        ? movie.genre_ids.map(id => genreNames[id]).filter(Boolean).join(", ")
+                        : "N/A"
+                    }</p>
+
+                    <p><strong>Director:</strong> N/A</p>
+
+                </div>
+
+                <div>
+                    <h3>Synopsis</h3>
+                    <p>${movie.overview}</p>
+                </div>
                 <button class="fav-btn ${isFavourite(movie.id) ? 'saved' : ''}" 
                         onclick="event.stopPropagation(); addToFavourites('${movie.id}', this)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-heart" viewBox="0 0 16 16">
@@ -309,15 +330,8 @@ function showMovieDetails(movie)
                          <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
                     </svg>
                 </button>
-            </div>
-
-            <div class="modal-right">
-                <h3>Synopsis</h3>
-                <p>${movie.overview}</p>
-            </div>
+            </div>   
         </div>
-
-        <button class="close-btn" onclick="closeModal()">Close</button>
     `;
 
     modal.classList.add("show");
@@ -413,10 +427,10 @@ function logout() {
     window.location.href = "index.html";
 }
 
-//load movies by 18
+//load movies by 21
 function loadMoreMovies()
 {
-    visibleMovies += 18;
+    visibleMovies += 20;
     currentPage++;
     getMovies(currentPage);
 }
@@ -444,3 +458,4 @@ function liveSearch()
     currentMovies = filtered;
     displayMovies(currentMovies.slice(0, visibleMovies));
 }
+

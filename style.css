@@ -140,12 +140,13 @@ img {
   align-items: center;
   justify-content: center;
 }
-.menu {
-   display: none; 
+.menu 
+{
+  display: none; 
   position: absolute;
   top: 64px;
   right: 16px;
-  width: 220px;
+  width: 90vw;
   background: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
@@ -154,12 +155,12 @@ img {
   flex-direction: column;
   gap: 6px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  max-width: 300px;
 }
 
 .menu.open {
   display: flex;
 }
-
 
 .menu p {
   font-size: 11px;
@@ -241,6 +242,17 @@ img {
   box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
+@media (max-width: 768px) {
+  .search-bar {
+    width: 100%;
+    padding: 0 16px;
+  }
+
+  #search-input {
+    width: 100%;
+  }
+}
+
 .search-btn {
   padding: 12px 18px;
   background: var(--accent);
@@ -251,12 +263,13 @@ img {
   align-items: center;
   justify-content: center;
   transition: background var(--transition);
+  min-width: 48px;
+  min-height: 48px;
 }
 
 .search-btn:hover {
   background: var(--accent-soft);
 }
-
 
 .watch-btn {
   padding: 12px 32px;
@@ -271,6 +284,7 @@ img {
   transition: background var(--transition), border-color var(--transition),
               transform var(--transition), color var(--transition);
   margin-top: 4px;
+  min-height: 48px;
 }
 
 .watch-btn:hover {
@@ -286,7 +300,6 @@ img {
   padding: 0 24px;
 }
 
-/* JS-injected featured card styles */
 .featured .featured-card {
   display: flex;
   gap: 0;
@@ -340,7 +353,7 @@ img {
   max-width: 540px;
 }
 
-.container 
+/* .container 
 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -348,11 +361,20 @@ img {
   padding: 0 24px 60px;
   max-width: 1400px;
   margin: 0 auto;
+} */
+
+.container
+{
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  padding: 0 16px 40px;
+  width: 100%;
 }
 
 .container .movie-card,
 .container .card {
-  width: 190px;
+  width: 100%;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
@@ -379,7 +401,6 @@ img {
   display: block;
   background: var(--bg-secondary);
 }
-
 
 .container .movie-card .no-poster,
 .container .card .no-poster {
@@ -419,7 +440,6 @@ img {
   margin-bottom: 4px;
 }
 
-
 .container .movie-card p,
 .container .card p {
   font-size: 12px;
@@ -427,14 +447,12 @@ img {
   margin: 0;
 }
 
-
 .container .movie-card .rating,
 .container .card .rating {
   font-size: 12px;
   color: var(--gold);
   font-weight: 600;
 }
-
 
 .container .movie-card .fav-btn,
 .container .card .fav-btn {
@@ -474,10 +492,11 @@ img {
   display: none;
   position: fixed;
   top: 40px;
+  bottom: 40px;
   left: 0;
   width:100%;
   height: 100%;
-  background: rgba(0,0,0,0.8);
+  background: transparent;
   justify-content: center;
   align-items: center;
   z-index: 1000;
@@ -488,66 +507,117 @@ img {
   display: flex;
 } 
 
+@media (max-width: 768px)
+{
+  .modal-content
+  {
+    width: 95vw;
+    height: 90vh;
+    padding: 16px;
+  }
+
+  .modal-layout 
+  {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .modal-left,
+  .modal-right 
+  {
+    width: 100%;
+  }
+
+  .modal-left img 
+  {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    object-fit: cover;
+  }
+
+  .modal-right button 
+  {
+    width: 100%;
+    margin-right: 0;
+  }
+}
+
 .modal-content 
 {
-    background: white;
-    padding: 20px;
+    background: var(--bg-secondary);
+    padding: 16px;
     border-radius: 12px;
+
+    width: 95vw;
+    height: 90vh;
+
+    overflow-y: auto;
+    position: relative;
 } 
+
+.close-x 
+{
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  font-size: 28px;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.close-x:hover 
+{
+  color: var(--accent);
+}
 
 .modal-layout 
 {
-    display: flex;
-    gap: 30px;
-    align-items: flex-start;
+  display: flex;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px;
+  align-items: start;
 }
 
 .modal-left 
 {
-    width: 25%;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 30%;
 }
 
 .modal-left img 
 {
-    width: 100%;
-    border-radius: 8px;
+  width: 100%;
+  border-radius: 10px;
+  height: 80%;
 }
 
 .modal-right 
 {
-    width: 65%;
-}
-
-.modal-right p 
-{
-    line-height: 1.6;
-    text-align: justify;
-}
-
-.close-btn 
-{
-    align-self: flex-end;
-    margin-top: 20px;
-    padding: 8px 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-}
-.modal-content
-{
   display: flex;
-  flex-direction: row;
-  gap: 20px;
-  background: #222;
-  padding: 20px;
-  width:85%;
-  max-width: 1200px;
-  height: 80vh;
-  border-radius: 12px;
-  overflow-y: auto;
+  flex-direction: column;
+  gap: 16px;
+  width: 70%;
+  top: 30px;
+}
+
+.modal-right button
+{
+  width: 15%;
+  height: auto;
+  margin-right: 50%;
+}
+.modal-meta p 
+{
+  margin: 6px 0;
+  color: var(--text-secondary);
+}
+
+.modal-synopsis p 
+{
+  line-height: 1.6;
 }
 
 .loading-msg,
@@ -704,38 +774,6 @@ body:has(.form-container) {
   .container .card img { height: 210px; }
 }
 
-@media screen and (max-width: 786px) 
-{
-  .modal-content
-  {
-    flex-direction: column;
-    width: 90%;
-    height: auto;
-    max-height: 90vh;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-  }
-
-  .modal-left
-  {
-    width: 100%;
-    text-align: center;
-  }
-
-  .modal-right
-  {
-    width: 100%;
-    margin-top: 20px;
-  }
-
-  modal-left img
-  {
-    max-width: 160px;
-  }
-}
-
 .genre-filter-bar 
 {
   display:flex;
@@ -824,4 +862,23 @@ body:has(.form-container) {
 .accent-btn:hover
 {
   background: var(--accent)
+}
+
+button:active,
+a:active 
+{
+  transform: scale(0.97);
+}
+
+.modal-content 
+{
+  max-width: 100%;
+  max-height: 100%;
+}
+
+@media (max-width: 768px) 
+{
+  .navbar h2 {
+    font-size: 24px;
+  }
 }
