@@ -2,6 +2,8 @@ const API_KEY = 'cc6be9344c3535221497d244fe2f7ff2';
 const API_URL = `https://api.themoviedb.org/3/movie/top_rated?api_key=${API_KEY}`;
 const IMG_PATH = 'https://image.tmdb.org/t/p/w500';
 
+let visibleMovies = 18;
+let currentMovies = [];
 const genreNames =
 {
     28: "Action",
@@ -28,8 +30,9 @@ try {
     const res = await fetch(API_URL);
     const data = await res.json();
     movieData = data.results;
+    currentMovies = [...movieData];
 
-    displayMovies(movieData);
+    displayMovies(currentMovies.slice(0, visibleMovies));
     if (typeof setupGenres === 'function') setupGenres(movieData);
     } catch (error) {
     console.error('Error fetching movies:', error);
@@ -43,7 +46,8 @@ function displayMovies(movies) {
     
     container.innerHTML = '';
 
-    movies.forEach(movie => {
+    movies.forEach(movie => 
+    {
         const { title, poster_path, vote_average, release_date } = movie;
 
         const movieElement = document.createElement('div');
@@ -55,11 +59,11 @@ function displayMovies(movies) {
         <h3>${title}</h3>
         <span class="rating">${vote_average.toFixed(1)}</span>
         <p>${release_date ? release_date.split('-')[0] : 'N/A'}</p>
-        <button onclick="addToFavourites('${movie.id}')"> 
+        <button class="fav-btn ${isFavourite(movie.id) ? 'saved' : ''}" 
+                onclick="event.stopPropagation(); addToFavourites('${movie.id}', this)">
              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-heart" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M8 4.41c1.387-1.425 4.854 1.07 0 4.277C3.146 5.48 6.613 2.986 8 4.412z"/>
                 <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1
-
             </svg>
         </button>
         </div>
@@ -141,7 +145,13 @@ function login()
     }
 }
 
-function addToFavourites(id) /*buttonElement*/
+function isFavourite(id)
+{
+    const favs = JSON.parse(localStorage.getItem("favourites")) || [];
+    return favs.includes(String(id));
+}
+
+function addToFavourites(id, buttonElement)
 {
     const loggedIn = sessionStorage.getItem("loggedIn");
 
@@ -157,11 +167,23 @@ function addToFavourites(id) /*buttonElement*/
     if (favs.includes(id))
     {
         favs = favs.filter(movieId => movieId !== id);
+
+        if(buttonElement)
+        {
+            buttonElement.classList.remove("saved");
+        }
+
         alert("Removed from favourites");
     }
     else
     {
         favs.push(id);
+
+        if(buttonElement)
+        {
+            buttonElement.classList.add("saved");
+        }
+
         alert("Added to favourites");
     }
 
@@ -185,12 +207,13 @@ function displayFavouritesPage(movies)
             <span class="rating">${vote_average}</span>
             <p>${release_date ? release_date.split('-')[0] : 'N/A'}</p>
 
-            <button onclick="addToFavourites('${movie.id}')"> 
+            <button class="fav-btn ${isFavourite(movie.id) ? 'saved' : ''}" 
+                    onclick="event.stopPropagation(); addToFavourites('${movie.id}', this)"> 
              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-heart" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M8 4.41c1.387-1.425 4.854 1.07 0 4.277C3.146 5.48 6.613 2.986 8 4.412z"/>
                 <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1
             </svg>
-        </button>
+            </button>
             </div>
             `;
             movieElement.onclick = (e) => 
@@ -247,7 +270,8 @@ function showMovieDetails(movie)
                         ? movie.release_date.split('-')[0]
                         : 'N/A'
                 }</p>
-                <button onclick="addToFavourites(${movie.id})">
+                <button class="fav-btn ${isFavourite(movie.id) ? 'saved' : ''}" 
+                        onclick="event.stopPropagation(); addToFavourites('${movie.id}', this)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-heart" viewBox="0 0 16 16">
                          <path fill-rule="evenodd" d="M8 4.41c1.387-1.425 4.854 1.07 0 4.277C3.146 5.48 6.613 2.986 8 4.412z"/>
                          <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
@@ -273,6 +297,7 @@ function closeModal()
     document.getElementById("movie-modal").classList.remove("show");
 }
 
+//window onload
 window.onload = () =>
 {
     if(document.getElementById("movie-container"))
@@ -285,7 +310,17 @@ window.onload = () =>
         loadFavourites();
     }
 
-    updateAuthButton();
+    if(document.getElementById("auth-link"))
+    {
+       updateAuthButton();
+    }
+
+    const searchInput = document.getElementById("search-input");
+
+    if(searchInput)
+    {
+        searchInput.addEventListener("input", liveSearch);
+    }
 }
 
 function setupGenres(movies)
@@ -293,7 +328,7 @@ function setupGenres(movies)
     const menu = document.getElementById("genre-dropdown-menu");
     if (!menu) return;
 
-    const uniqueGenres = new set();
+    const uniqueGenres = new Set();
 
     movies.forEach(movie => {
         movie.genre_ids?.forEach(id => uniqueGenres.add(id));
@@ -342,4 +377,35 @@ function updateAuthButton()
 function logout() {
     sessionStorage.removeItem("loggedIn");
     window.location.href = "index.html";
+}
+
+//load movies by 18
+function loadMoreMovies()
+{
+    visibleMovies +=18;
+    // displayMovies(currentMovies.slice(0, visibleMovies));
+    displayMovies(currentMovies);
+}
+
+//livesearch function
+function liveSearch()
+{
+    const query = document
+    .getElementById("search-input")
+    .value
+    .toLowerCase();
+
+    if(query.trim() === "")
+    {
+        currentMovies = [...movieData];
+        displayMovies(currentMovies.slice(0, visibleMovies));
+        return;
+    }
+
+    const filtered = movieData.filter(movie =>
+        movie.title.toLowerCase().includes(query)
+    );
+
+    currentMovies = filtered;
+    displayMovies(currentMovies.slice(0, visibleMovies));
 }
