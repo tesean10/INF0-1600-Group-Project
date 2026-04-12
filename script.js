@@ -1,5 +1,5 @@
 const API_KEY = 'cc6be9344c3535221497d244fe2f7ff2';
-const API_URL = `https://api.themoviedb.org/3/movie/top_rated?api_key=${API_KEY}`;
+const API_URL = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}`;
 const IMG_PATH = 'https://image.tmdb.org/t/p/w500';
 
 let visibleMovies = 20;
@@ -41,33 +41,28 @@ let movieData = [];
 //     }
 // }
 
-async function getMovies(page = 1)
-{
-try {
-    const URL = `https://api.themoviedb.org/3/movie/top_rated?api_key=${API_KEY}&page=${page}`;
+async function getMovies(page = 1) {
+    try {
+    const URL = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&page=${page}`;
     const res = await fetch(URL);
     const data = await res.json();
 
-    if (page === 1)
-    {
-        movieData =data.results
-    }
-    else
-    {
+    if (page === 1) {
+            movieData = data.results;
+        } else {
         movieData = [...movieData, ...data.results];
-    }
+        }
 
-    currentMovies = [...movieData];
-    displayMovies(movieData);
+        currentMovies = [...movieData];
+        
+        displayMovies(movieData);
 
-    if (typeof setupGenres === 'function') 
-    {
-        setupGenres(movieData);
-    } 
-    
-    }catch (error) 
-    {
-    console.error('Error fetching movies:', error);
+        if (typeof setupGenres === 'function') {
+            setupGenres(movieData);
+        } 
+        
+    } catch (error) {
+        console.error('Error fetching movies:', error);
     }
 }
 
@@ -125,12 +120,13 @@ function searchMovies()
 }
 
 // API Search Logic Entire catalouge
-async function apisearchMovies() 
-{
+async function apisearchMovies() {
     const query = document.getElementById('search-input').value;
     
     if (query.trim() === "") {
-        getMovies(); // If empty, show top rated
+        // If the box is empty, go back to showing the top rated movies
+        visibleMovies = 20; 
+        getMovies(1); 
         return;
     }
 
@@ -139,20 +135,32 @@ async function apisearchMovies()
         const res = await fetch(SEARCH_URL);
         const data = await res.json();
         
-        displayMovies(data.results);
+        movieData = data.results;
+        currentMovies = [...data.results];
+
+        // Reset visible movies count for the new search results
+        visibleMovies = 20; 
+        
+        displayMovies(currentMovies);
+        
     } catch (error) {
         console.error("Search failed:", error);
     }
 }
 // Sort Movies
 function sortMovies(type) {
-    let sorted = [...movieData];
+    // 
     if (type === 'date') { 
-        sorted.sort((a, b) => new Date(b.release_date) - new Date(a.release_date));
+        movieData.sort((a, b) => new Date(b.release_date) - new Date(a.release_date));
     } else if (type === 'alpha') {
-        sorted.sort((a, b) => a.title.localeCompare(b.title)); 
+        movieData.sort((a, b) => a.title.localeCompare(b.title)); 
     }
-    displayMovies(sorted);
+    
+    
+    displayMovies(movieData);
+    
+    const menu = document.getElementById('menu');
+    if (menu) menu.classList.remove('open');
 }
 
 // Toggle Menu
@@ -244,9 +252,9 @@ function displayFavouritesPage(movies)
 
             <button class="fav-btn ${isFavourite(movie.id) ? 'saved' : ''}" 
                     onclick="event.stopPropagation(); addToFavourites('${movie.id}', this)"> 
-             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-heart" viewBox="0 0 16 16">
+             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-bookmark-heart" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M8 4.41c1.387-1.425 4.854 1.07 0 4.277C3.146 5.48 6.613 2.986 8 4.412z"/>
-                <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1
+                <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 
             </svg>
             </button>
             </div>
@@ -367,35 +375,52 @@ window.onload = () =>
     {
         searchInput.addEventListener("input", liveSearch);
     }
+    const searchBtn = document.getElementById("search-button"); // Ensure your HTML button has this ID
+    if (searchBtn) {
+    searchBtn.addEventListener("click", apisearchMovies);
+    }
+    document.getElementById("search-input").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        apisearchMovies();
+    }
+});
 }
 
-function setupGenres(movies)
-{
+function setupGenres(movies) {
     const menu = document.getElementById("genre-dropdown-menu");
     if (!menu) return;
 
+    // Use a Set to keep track of genres we've found in the movie list
     const uniqueGenres = new Set();
-
     movies.forEach(movie => {
         movie.genre_ids?.forEach(id => uniqueGenres.add(id));
     });
 
-    menu.innerHTML =`<a onclick="displayMovies(movieData)">All</a>`;
+    // Reset the menu and add the "All" option
+    menu.innerHTML = `<a href="#" id="genre-all">All Movies</a>`;
+    document.getElementById("genre-all").onclick = (e) => {
+        e.preventDefault();
+        displayMovies(movieData);
+    };
 
-    uniqueGenres.forEach(id => {
-        if(genreNames[id])
-        {
+    // Sort the genre names alphabetically before adding to menu
+    const sortedGenreIds = Array.from(uniqueGenres).sort((a, b) => 
+        (genreNames[a] || "").localeCompare(genreNames[b] || "")
+    );
+
+    sortedGenreIds.forEach(id => {
+        if (genreNames[id]) {
             const item = document.createElement("a");
+            item.href = "#";
             item.innerText = genreNames[id];
 
-            item.onclick = () => 
-            {
+            item.onclick = (e) => {
+                e.preventDefault();
                 const filtered = movieData.filter(movie =>
                     movie.genre_ids?.includes(id)
                 );
                 displayMovies(filtered);
             };
-
             menu.appendChild(item);
         }
     });

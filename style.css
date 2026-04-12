@@ -548,24 +548,39 @@ img {
 .container .movie-card .fav-btn,
 .container .card .fav-btn {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 30px;
-  height: 30px;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: none;
-  background: rgba(13,13,15,0.75);
-  color: var(--text-muted);
-  font-size: 16px;
+  
+  background: rgba(0, 0, 0, 0.6); 
+  color: var(--text-primary); 
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(4px);
-  transition: background var(--transition), color var(--transition),
-              transform var(--transition);
+  backdrop-filter: blur(8px); 
+  transition: background var(--transition), color var(--transition), transform var(--transition);
+  z-index: 5;
+}
+.fav-btn svg {
+  width: 50px; 
+  height: 50px;
+  transition: transform 0.2s ease;
+}
+.fav-btn.saved svg {
+  fill: var(--accent); /* Fills the heart */
+  color: var(--accent); /* Colors the outline */
 }
 
+.fav-btn.saved {
+  background: rgba(229, 9, 20, 0.2); /* Optional: give the circle a slight red tint */
+}
+.fav-btn:hover svg {
+  transform: scale(1.5); 
+}
 .container .movie-card .fav-btn:hover,
 .container .card .fav-btn:hover {
   background: var(--accent-glow);
@@ -914,6 +929,8 @@ body:has(.form-container) {
   min-width: 180px;
   z-index: 300;
   padding: 8px;
+  padding-top: 5px;
+  margin-top: -5px;
 }
 
 .genre-dropdown:hover .genre-dropdown-menu
