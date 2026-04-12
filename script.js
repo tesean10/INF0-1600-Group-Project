@@ -21,6 +21,8 @@ try {
 // Render Movies to the Container
 function displayMovies(movies) {
     const container = document.getElementById('movie-container');
+    if (!container) return;
+    
     container.innerHTML = '';
 
     movies.forEach(movie => {
@@ -43,8 +45,15 @@ function displayMovies(movies) {
         </button>
         </div>
         `;
-        
-         movieElement.onclick = () => showMovieDetails(movie);
+
+         movieElement.onclick = (e) => 
+            {
+                // Prevents the click event from triggering when the button is clicked
+                if(e.target.tagName.toLowerCase() !== 'button' && !e.target.closest('button'))
+                {
+                    showMovieDetails(movie);
+                }
+            };
 
          container.appendChild(movieElement);
     });
@@ -76,7 +85,7 @@ function toggleMenu() {
     menu.classList.toggle('open');
 }
 
-getMovies();
+//getMovies();
 
 //login
 function login()
@@ -95,7 +104,7 @@ function login()
     }
 }
 
-function addToFavourites()
+function addToFavourites(id,buttonElement)
 {
     let favs = JSON.parse(localStorage.getItem("favourites")) || [];
 
@@ -103,7 +112,79 @@ function addToFavourites()
     {
         favs.push(id);
         localStorage.setItem("favourites", JSON.stringify(favs));
+
+        if(buttonElement)
+        {
+            buttonElement.classList.add('active');
+            buttonElement.innerHTML = "Added to Favourites";
+        }
         alert("Added to favourites");
+    }
+}
+
+
+function displayFavouritesPage(movies)
+{
+    const container = document.getElementById("favourites-container");
+    if (!container) return;
+    movies.forEach(movie =>
+        {
+            const { title, poster_path, vote_average, release_date } = movie;   
+            const movieElement = document.createElement('div');
+            movieElement.classList.add('movie-card');
+            movieElement.innerHTML = `
+            <img src="${poster_path ? IMG_PATH + poster_path : 'https://via.placeholder.com/500x750'}" alt="${title}">
+            <div class="movie-info">
+            <h3>${title}</h3>
+            <span class="rating">${vote_average}</span>
+            <p>${release_date ? release_date.split('-')[0] : 'N/A'}</p>
+
+            <button class="remove-btn" onclick="removeFromFavourites(${movie.id})">
+                Remove from Favourites
+            </button>
+            </div>
+            `;
+            movieElement.onclick = (e) => 
+            {
+                if(e.target.tagName !== 'BUTTON' && !e.target.closest('BUTTON'))
+                {
+                    showMovieDetails(movie);
+                }
+            };
+
+                container.appendChild(movieElement);
+            
+        });
+}
+// Load Favourites
+async function loadFavourites()
+{
+    console.log("1: Loading favourites...");
+    const container = document.getElementById("favourites-container");
+    const favs = JSON.parse(localStorage.getItem("favourites")) || [];
+    container.innerHTML = '';
+
+    console.log("2: Saved ids found:", favs);
+    if (favs.length === 0)
+    {
+        container.innerHTML = '<p class="empty-msg">No favourites added yet.</p>';
+        return;
+    }   
+
+    for (const id of favs)
+    {
+        console.log(`3: Fetching details for movie ID ${id}...`);
+        const res = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}`);
+        const movie = await res.json();
+        displayFavouritesPage([movie]);
+    }
+
+    window.onload = () =>
+    {
+        if(document.getElementById("favourites-container"))
+        {
+            loadFavourites();
+        }
     }
 }
 
@@ -146,4 +227,17 @@ function showMovieDetails(movie)
 function closeModal()
 {
     document.getElementById("movie-modal").classList.remove("show");
+}
+
+window.onload = () =>
+{
+    if(document.getElementById("movie-container"))
+    {
+        getMovies();
+    }
+
+    if(document.getElementById("favourites-container"))
+    {
+        loadFavourites();
+    }
 }
