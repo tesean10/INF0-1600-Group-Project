@@ -4,6 +4,8 @@ const IMG_PATH = 'https://image.tmdb.org/t/p/w500';
 
 let visibleMovies = 18;
 let currentMovies = [];
+let currentPage = 1;
+
 const genreNames =
 {
     28: "Action",
@@ -25,16 +27,45 @@ const genreNames =
 let movieData = []; 
 
 // Fetch Data from TMDB
-async function getMovies() {
+// async function getMovies() {
+// try {
+//     const res = await fetch(API_URL);
+//     const data = await res.json();
+//     movieData = data.results;
+//     currentMovies = [...movieData];
+
+//     displayMovies(currentMovies.slice(0, visibleMovies));
+//     if (typeof setupGenres === 'function') setupGenres(movieData);
+//     } catch (error) {
+//     console.error('Error fetching movies:', error);
+//     }
+// }
+
+async function getMovies(page = 1)
+{
 try {
     const res = await fetch(API_URL);
     const data = await res.json();
-    movieData = data.results;
-    currentMovies = [...movieData];
 
+    if (page === 1)
+    {
+        movieData =data.results
+    }
+    else
+    {
+        movieData = [...movieData, ...data.results];
+    }
+
+    currentMovies = [...movieData];
     displayMovies(currentMovies.slice(0, visibleMovies));
-    if (typeof setupGenres === 'function') setupGenres(movieData);
-    } catch (error) {
+
+    if (typeof setupGenres === 'function') 
+    {
+        setupGenres(movieData);
+    } 
+    
+    }catch (error) 
+    {
     console.error('Error fetching movies:', error);
     }
 }
@@ -147,7 +178,7 @@ function login()
 
 function isFavourite(id)
 {
-    const favs = JSON.parse(localStorage.getItem("favourites")) || [];
+    const favs = JSON.parse(sessionStorage.getItem("favourites")) || [];
     return favs.includes(String(id));
 }
 
@@ -162,7 +193,7 @@ function addToFavourites(id, buttonElement)
         return;
     }
 
-    let favs = JSON.parse(localStorage.getItem("favourites")) || [];
+    let favs = JSON.parse(sessionStorage.getItem("favourites")) || [];
 
     if (favs.includes(id))
     {
@@ -187,7 +218,7 @@ function addToFavourites(id, buttonElement)
         alert("Added to favourites");
     }
 
-    localStorage.setItem("favourites", JSON.stringify(favs));
+    sessionStorage.setItem("favourites", JSON.stringify(favs));
 
 }
 
@@ -233,7 +264,7 @@ async function loadFavourites()
 {
     console.log("1: Loading favourites...");
     const container = document.getElementById("favourites-container");
-    const favs = JSON.parse(localStorage.getItem("favourites")) || [];
+    const favs = JSON.parse(sessionStorage.getItem("favourites")) || [];
     container.innerHTML = '';
 
     console.log("2: Saved ids found:", favs);
@@ -365,12 +396,14 @@ function updateAuthButton()
         authLink.innerText = "Logout";
         authLink.href ="#";
         authLink.onclick = logout;
+        authLink.classList.add("logout-style");
     }
     else
     {
         authLink.innerText ="Login";
         authLink.href = "login.html";
         authLink.onclick = null;
+        authLink.classList.remove("logout-style");
     }
 }
 
@@ -382,10 +415,11 @@ function logout() {
 //load movies by 18
 function loadMoreMovies()
 {
-    visibleMovies +=18;
-    // displayMovies(currentMovies.slice(0, visibleMovies));
-    displayMovies(currentMovies);
+    visibleMovies += 18;
+    currentPage++;
+    getMovies(currentPage);
 }
+
 
 //livesearch function
 function liveSearch()

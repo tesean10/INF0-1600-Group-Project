@@ -34,7 +34,7 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-body);
-  background-color: var(--bg-primary);
+  background-color: rgb(10, 0, 0);
   color: var(--text-primary);
   font-size: 16px;
   line-height: 1.6;
@@ -91,22 +91,6 @@ img {
   transition: color var(--transition), border-color var(--transition),
               background var(--transition);
 }
-
-/* .nav-links a:hover {
-  color: var(--text-primary);
-  border-color: var(--border-hover);
-}
-
-.nav-links a:first-child {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
-}
-
-.nav-links a:first-child:hover {
-  background: var(--accent-soft);
-  border-color: var(--accent-soft);
-} */
 
 #auth-link
 {
@@ -368,7 +352,7 @@ img {
 
 .container .movie-card,
 .container .card {
-  width: 180px;
+  width: 190px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
@@ -819,4 +803,25 @@ body:has(.form-container) {
 {
   fill: var(--accent);
   color: var(--accent);
+}
+
+.logout-style
+{
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.accent-btn
+{
+  background: var(--accent);
+  color: white;
+  padding: 8px 18px;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+}
+
+.accent-btn:hover
+{
+  background: var(--accent)
 }
